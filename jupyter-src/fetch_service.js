@@ -62,11 +62,11 @@ if (!self.document) {
     function doFetch(evt)
     {
         let url=new URL(evt.request.url)
-        if(url.pathname==="/fetch_service/fetch_headers")
+        if(url.pathname.endsWith("/fetch_service/fetch_headers"))
         {
             evt.respondWith(fetch_header_id(evt.request));
         }
-        else if(url.pathname==="/fetch_service/fetch_block")
+        else if(url.pathname.endsWith("/fetch_service/fetch_block"))
         {
             let fetchID=parseInt(url.search.substr(1));
             if(fetchID in fetches)
