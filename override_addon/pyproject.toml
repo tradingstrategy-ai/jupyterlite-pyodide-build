@@ -1,0 +1,11 @@
+[build-system]
+build-backend = "flit_core.buildapi"
+requires = ["flit_core >=3.7.1,<4"]
+
+[project]
+name="override_addon"
+version= "1.0.0"
+description="Override jupyter files in site based on the overrides directory"
+
+[project.entry-points."jupyterlite.addon.v0"]
+override_addon = "override_addon:FetchAddon"
