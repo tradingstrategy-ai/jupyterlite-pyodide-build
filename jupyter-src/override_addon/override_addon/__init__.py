@@ -22,7 +22,7 @@ class FetchAddon(BaseAddon):
                 yield dict(
                         name=f"override copy:{rel} {dest_file}",
                         doc=f"override copy {src_file} to {dest_file}",
-                        file_dep=[src_file],
+                        file_dep=[],
                         targets=[dest_file],
                         actions=[
                             (self.copy_one, [src_file, dest_file]),
