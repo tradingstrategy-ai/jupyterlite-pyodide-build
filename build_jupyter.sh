@@ -5,11 +5,11 @@ if [[ $BASH_SOURCE = */* ]]; then
 fi
 echo $PWD
 pip install jupyter-build/override_addon
-mkdir -p jupyter-build/static/pyodide
+mkdir -p jupyter-src/static/pyodide
 mkdir -p docs
-cp ~/pyodide/build/* jupyter-build/static/pyodide/
+cp ~/pyodide/build/* jupyter-src/static/pyodide/
 rm -rf docs/*
-cd jupyter-build 
+cd jupyter-src
 rm -rf _output
 jupyter lite build
 cp -r _output/* ../docs
