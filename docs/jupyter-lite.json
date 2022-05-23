@@ -159,6 +159,11 @@
     "fullMathjaxUrl": "./static/jupyter_server_mathjax/MathJax.js",
     "fullStaticUrl": "./build",
     "licensesUrl": "./lab/api/licenses",
+    "litePluginSettings": {
+      "@jupyterlite/pyolite-kernel-extension:kernel": {
+        "pyodideUrl": "./static/pyodide/pyodide.js"
+      }
+    },
     "mathjaxConfig": "TeX-AMS-MML_HTMLorMML-full,Safe",
     "preferredPath": "/"
   },
