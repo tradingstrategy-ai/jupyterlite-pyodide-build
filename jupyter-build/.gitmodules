@@ -1,8 +1,0 @@
-[submodule "ts-jupyterlite-site"]
-	path = ts-jupyterlite-site
-	url = ../ts-jupyterlite-site.git
-	branch = pages_site
-[submodule "generated_site"]
-	path = generated_site
-	url = ../ts-jupyterlite-site.git
-	branch = pages_site
