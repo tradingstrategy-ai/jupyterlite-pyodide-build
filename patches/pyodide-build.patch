@@ -324,17 +324,18 @@ index f1ed3fe0..9f72d97e 100755
          # This produces two types of error messages:
 diff --git a/ts-build-packages.sh b/ts-build-packages.sh
 new file mode 100644
-index 00000000..e80a646e
+index 00000000..d43cb50d
 --- /dev/null
 +++ b/ts-build-packages.sh
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,11 @@
 +export PYODIDE_PACKAGES="*"
++export PYODIDE_ROOT="/src"
 +pushd pyodide-build/pyodide_build
 +
 +
 +# now get all deps of trading-strategy as pyodide packages
-+python mkpkg.py trading-strategy 
++python mkpkg.py trading-strategy
 +popd
 +
-+make clean
++#make clean
 +make
