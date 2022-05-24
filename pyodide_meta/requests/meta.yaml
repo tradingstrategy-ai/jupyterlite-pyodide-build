@@ -1,0 +1,23 @@
+package:
+  name: requests
+  version: 2.26.1
+source:
+  url: https://github.com/joemarshall/requests/archive/ecb223d0be7370cacc009e4c2c4ea584dfa4d56b.zip
+  sha256: d20c86fcdf3eca21e6a17ae14a8105628efa924a91d5477e0bbb13aef211ea8e
+  extract_dir: requests-ecb223d0be7370cacc009e4c2c4ea584dfa4d56b/
+# path: src/requests
+test:
+  imports:
+    - requests
+requirements:
+  run:
+    - urllib3
+    - certifi
+    - idna
+    - charset-normalizer
+    - idna
+about:
+  home: https://requests.readthedocs.io
+#  PyPI: https://pypi.org/project/requests
+  summary: Python HTTP for Humans.
+  license: Apache 2.0

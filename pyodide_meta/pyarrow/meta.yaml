@@ -1,0 +1,25 @@
+package:
+  name: pyarrow
+  version: 7.0.0
+source:
+  url: https://github.com/joemarshall/arrow-wasm-cpp/archive/dd5973a59b23874fdbb89bd4942e1f4fc9c0f316.zip
+  sha256: ba4713a26a678c4d74d0c9aab3b88a2498b450616e6ce3a8c973c516a149b323
+  extract_dir: arrow-wasm-cpp-dd5973a59b23874fdbb89bd4942e1f4fc9c0f316
+#    path: src/arrow-wasm-cpp
+test:
+  imports:
+    - pyarrow
+
+requirements:
+    run:
+      - numpy
+
+build:
+    script: |
+        mkdir -p build/pyodide/pyarrow 
+        echo > build/pyodide/pyarrow/__init__.py
+about:
+  home: http://github.com/joemarshall/arrow-wasm-cpp
+#  PyPI: 
+  summary: pyarrow compiled for webassembly
+  license: MIT
