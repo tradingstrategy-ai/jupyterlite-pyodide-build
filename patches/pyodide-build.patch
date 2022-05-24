@@ -1,5 +1,5 @@
 diff --git a/pyodide-build/pyodide_build/mkpkg.py b/pyodide-build/pyodide_build/mkpkg.py
-index f1ed3fe0..9f72d97e 100755
+index f1ed3fe..9d87e89 100755
 --- a/pyodide-build/pyodide_build/mkpkg.py
 +++ b/pyodide-build/pyodide_build/mkpkg.py
 @@ -9,11 +9,14 @@ import sys
@@ -69,7 +69,7 @@ index f1ed3fe0..9f72d97e 100755
      version = ("/" + version) if version is not None else ""
      url = f"https://pypi.org/pypi/{package}{version}/json"
  
-@@ -93,11 +138,101 @@ def run_prettier(meta_path):
+@@ -93,11 +138,108 @@ def run_prettier(meta_path):
      subprocess.run(["npx", "prettier", "-w", meta_path])
  
  
@@ -94,22 +94,29 @@ index f1ed3fe0..9f72d97e 100755
 +        with tempfile.NamedTemporaryFile(suffix=filetype) as tf:
 +            with urllib.request.urlopen(url) as fd:
 +                tf.write(fd.read())
++            all_files=[]
 +            if url.endswith(".zip") or url.endswith(".whl"):
 +                # wheel is zip
 +                with ZipFile(tf) as package:
 +                    all_files=package.namelist()
-+                    all_modules=[]
-+                    for f in all_files:
-+                        if f.endswith("__init__.py") and f.find("/test/")==-1:
-+                            all_modules.append(PurePath("/"+f).parents[0])
 +            elif url.endswith(".tar.gz") or url.endswith(".tgz"):
 +                # wheel is tar gz
 +                with tarfile.open(tf.name) as package:
 +                    all_files=package.getnames()
 +                    all_modules=[]
-+                    for f in all_files:
-+                        if f.endswith("__init__.py") and f.find("/test/")==-1:
-+                            all_modules.append(PurePath("/"+f).parents[0])
++            all_modules=[]
++            for f in all_files:
++                # find module folders
++                if f.endswith("__init__.py") and f.find("/test/")==-1:
++                    all_modules.append(PurePath("/"+f).parents[0])
++            if len(all_modules)==0:
++                # is this maybe a single file module with a file called 'modulename.py'?
++                for f in all_files:
++                    p=PurePath("/"+f)
++                    if p.suffix==".py":
++                        cleaned=_make_project_compare_name(p.stem)
++                        if cleaned==project_name:
++                            return [p.stem]
 +            if len(all_modules)==0:
 +                print(f"WARNING: COuldn't find any imports in package {url}")
 +                return []
@@ -171,7 +178,7 @@ index f1ed3fe0..9f72d97e 100755
  ):
      """
      Creates a template that will work for most pure Python packages,
-@@ -125,10 +260,99 @@ def make_package(
+@@ -125,10 +267,106 @@ def make_package(
      license = pypi_metadata["info"]["license"]
      pypi = "https://pypi.org/project/" + package
  
@@ -205,6 +212,9 @@ index f1ed3fe0..9f72d97e 100755
 +
 +    class EnvironmentHelper(pkg_resources.Environment):
 +        def __init__(self):
++            super().__init__(search_path=[packages_dir])
++
++        def scan(self, search_path=None):
 +            pass
 +
 +        def make_dist(self,proj_name,meta_path):
@@ -243,12 +253,16 @@ index f1ed3fe0..9f72d97e 100755
 +    dist=YamlDistribution(package_dir,project_name=package,version=version)
 +    requires_packages=dist.requires(extras=our_extras)
 +
++    env=EnvironmentHelper()
++
 +    if make_dependencies:
 +        ws= pkg_resources.WorkingSet([])
-+        ws.resolve(requires_packages,env=EnvironmentHelper(),extras=our_extras)
++        ws.resolve(requires_packages,env=env,extras=our_extras)
 +
 +    for r in requires_packages:
 +        name=r.name
++        if r.marker and not r.marker.evaluate(environment=env):
++            continue
 +        if os.path.isfile(packages_dir / name / "meta.yaml"):
 +            yaml_requires.append(name)
 +        else:
@@ -272,15 +286,18 @@ index f1ed3fe0..9f72d97e 100755
          "about": {
              "home": homepage,
              "PyPI": pypi,
-@@ -137,7 +361,6 @@ def make_package(
+@@ -137,9 +375,8 @@ def make_package(
          },
      }
  
 -    package_dir = packages_dir / package
      package_dir.mkdir(parents=True, exist_ok=True)
- 
+-
++    
      meta_path = package_dir / "meta.yaml"
-@@ -262,6 +485,11 @@ complex things.""".strip()
+     if meta_path.exists():
+         raise MkpkgFailedException(f"The package {package} already exists")
+@@ -262,6 +499,11 @@ complex things.""".strip()
          action="store_true",
          help="Update existing package if it has no patches",
      )
@@ -292,7 +309,7 @@ index f1ed3fe0..9f72d97e 100755
      parser.add_argument(
          "--source-format",
          help="Which source format is preferred. Options are wheel or sdist. "
-@@ -275,6 +503,20 @@ complex things.""".strip()
+@@ -275,6 +517,20 @@ complex things.""".strip()
          help="Package version string, "
          "e.g. v1.2.1 (defaults to latest stable release)",
      )
@@ -313,7 +330,7 @@ index f1ed3fe0..9f72d97e 100755
      return parser
  
  
-@@ -309,7 +551,7 @@ def main(args):
+@@ -309,7 +565,7 @@ def main(args):
              )
              return
          make_package(
@@ -322,20 +339,3 @@ index f1ed3fe0..9f72d97e 100755
          )
      except MkpkgFailedException as e:
          # This produces two types of error messages:
-diff --git a/ts-build-packages.sh b/ts-build-packages.sh
-new file mode 100644
-index 00000000..d43cb50d
---- /dev/null
-+++ b/ts-build-packages.sh
-@@ -0,0 +1,11 @@
-+export PYODIDE_PACKAGES="*"
-+export PYODIDE_ROOT="/src"
-+pushd pyodide-build/pyodide_build
-+
-+
-+# now get all deps of trading-strategy as pyodide packages
-+python mkpkg.py trading-strategy
-+popd
-+
-+#make clean
-+make
