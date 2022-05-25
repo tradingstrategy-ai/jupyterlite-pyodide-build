@@ -1,0 +1,30 @@
+package:
+  name: trading-strategy
+  version: 0.6.9
+source:
+  url: https://github.com/joemarshall/trading-strategy/releases/download/pyodide_test/trading_strategy-0.6.9-py3-none-any.whl
+  sha256: 9ca7f904fc81f33b6e71d00356b08aa2e2290aecd7a75db73bbe6f4c43c684a5
+test:
+  imports:
+    - tradingstrategy
+requirements:
+  run:
+    - eth-utils
+    - dataclasses-json
+    - pandas
+    - pyarrow
+    - eth-hash
+    - tqdm
+    - plotly
+    - cufflinks
+    - chart-studio
+    - mplfinance
+    - scipy
+    - trading-strategy-backtrader
+about:
+  home: https://tradingstrategy.ai
+  PyPI: https://pypi.org/project/trading-strategy
+  summary:
+    Algorithmic trading and quantitative financial analysis framework for decentralised
+    exchanges and blockchains
+  license: AGPL
