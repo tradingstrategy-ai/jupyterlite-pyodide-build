@@ -42,14 +42,26 @@ configure_meta(trading-strategy)
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide
 COMMAND git clone --depth 1 --branch ${PYODIDE_VERSION} ${PYODIDE_SOURCE}
 COMMAND git config apply.whitespace nowarn && cd pyodide && git apply ${CMAKE_SOURCE_DIR}/patches/pyodide-build.patch 
-COMMAND cp -r ${CMAKE_SOURCE_DIR}/pyodide_meta/* ${CMAKE_SOURCE_DIR}/pyodide/packages/ 
 COMMAND rm -rf ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
+COMMAND cp -r ${CMAKE_SOURCE_DIR}/pyodide_meta/* ${CMAKE_SOURCE_DIR}/pyodide/packages/ 
 )
 
 add_custom_target(patch_pyodide
 DEPENDS  ${CMAKE_SOURCE_DIR}/pyodide
 )
 
+function(create_pyodide_meta package_name)
+    add_custom_command(TARGET patch_pyodide
+        POST_BUILD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
+        COMMAND echo "export PYODIDE_ROOT=/src;cd /src/pyodide-build/pyodide_build;python mkpkg.py --make-dependencies --find-correct-imports ${package_name};true" > makemeta.sh
+        COMMAND ./run_docker bash makemeta.sh
+        VERBATIM
+
+    )
+endfunction()
+
+create_pyodide_meta(trading-strategy)
 
 
 
@@ -65,18 +77,6 @@ add_custom_target(build_pyodide
 DEPENDS  ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
 )
 
-function(create_pyodide_meta package_name)
-    add_custom_command(TARGET patch_pyodide
-        POST_BUILD
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
-        COMMAND echo "export PYODIDE_ROOT=/src;cd /src/pyodide-build/pyodide_build;python mkpkg.py --make-dependencies --find-correct-imports ${package_name}" > makemeta.sh
-        COMMAND ./run_docker bash makemeta.sh
-        VERBATIM
-
-    )
-endfunction()
-
-create_pyodide_meta(trading-strategy)
 
 
 add_dependencies(build_pyodide patch_pyodide)
