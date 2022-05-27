@@ -1,9 +1,9 @@
 package:
   name: trading-strategy
-  version: 0.6.9
+  version: ${TRADING_STRATEGY_VERSION}
 source:
-  url: https://github.com/joemarshall/trading-strategy/releases/download/pyodide_test/trading_strategy-0.6.9-py3-none-any.whl
-  sha256: 79593f82c66d9cb157e1aa86f92d6fb1810c9b66772b49760a8cd1a6d1d84203
+  url: ${TRADING_STRATEGY_SOURCE}
+  sha256: ${TRADING_STRATEGY_SHA256}
 test:
   imports:
     - tradingstrategy

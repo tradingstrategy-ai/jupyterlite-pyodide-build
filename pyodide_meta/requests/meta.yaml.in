@@ -1,0 +1,20 @@
+package:
+  name: requests
+  version: ${PYODIDE_REQUESTS_VERSION}
+source:
+  url: ${PYODIDE_REQUESTS_SOURCE}
+  sha256: ${PYODIDE_REQUESTS_SHA256}
+  extract_dir: pyodide_requests-pyodide_${PYODIDE_REQUESTS_VERSION}
+test:
+  imports:
+    - requests
+requirements:
+  run:
+    - urllib3
+    - certifi
+    - charset-normalizer
+    - idna
+about:
+  home: https://github.com/joemarshall/pyodide_requests/
+  summary: Python HTTP for Humans.
+  license: Apache 2.0
