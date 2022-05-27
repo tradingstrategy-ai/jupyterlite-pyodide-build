@@ -4,7 +4,7 @@ package:
 source:
   url: ${PYARROW_WASM_SOURCE}
   sha256: ${PYARROW_WASM_SHA256}
-  extract_dir: pyarrow-${PYARROW_WASM_VERSION}
+  extract_dir: pyarrow-wasm-${PYARROW_WASM_VERSION}
 test:
   imports:
     - pyarrow
