@@ -68,7 +68,7 @@ create_pyodide_meta(nbformat)
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
 COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && ./run_docker PYODIDE_PACKAGES=* make
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
-COMMAND find ${CMAKE_SOURCE_DIR}/pyodide/build/ -not -name *.tar -not -name *.zip -exec cp {} ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/ ";"
+COMMAND find ${CMAKE_SOURCE_DIR}/pyodide/build/ -not -name *tests*.tar  -exec cp {} ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/ ";"
 DEPENDS ${CMAKE_SOURCE_DIR}/pyodide
 VERBATIM
 )
