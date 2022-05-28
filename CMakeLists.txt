@@ -9,8 +9,20 @@ include(ExternalProject) # ExternalProject_Add
 set(PYODIDE_VERSION 0.20.0)
 set(PYODIDE_SOURCE https://github.com/pyodide/pyodide.git)
 
+set(JUPYTERLITE_VERSION 0.1.0b7)
+
 function(configure_meta package_name)
-    configure_file(pyodide_meta/${package_name}/meta.yaml.in pyodide_meta/${package_name}/meta.yaml)
+    configure_file(${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml.in ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml)
+    add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.meta_configured
+        COMMAND cp ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/meta.yaml
+        # force rebuild if meta file changes
+        COMMAND rm -rf ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/build/
+        # force refind of dependencies
+        COMMAND rm -f ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
+        COMMAND touch ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.meta_configured
+        DEPENDS ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml
+    )
+    set(META_DEPENDENCIES_OUTPUTS ${META_DEPENDENCIES_OUTPUTS} ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.meta_configured PARENT_SCOPE)
 endfunction()
 
 
@@ -41,27 +53,33 @@ add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide
 COMMAND git clone --depth 1 --branch ${PYODIDE_VERSION} ${PYODIDE_SOURCE}
 COMMAND git config apply.whitespace nowarn && cd pyodide && git apply ${CMAKE_SOURCE_DIR}/patches/pyodide-build.patch 
 COMMAND rm -rf ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
-COMMAND cp -r ${CMAKE_SOURCE_DIR}/pyodide_meta/* ${CMAKE_SOURCE_DIR}/pyodide/packages/ 
 )
 
-add_custom_target(patch_pyodide
-DEPENDS  ${CMAKE_SOURCE_DIR}/pyodide
+
+add_custom_target(get_and_patch_pyodide 
+    DEPENDS ${CMAKE_SOURCE_DIR}/pyodide
 )
 
-function(create_pyodide_meta package_name)
-    add_custom_command(TARGET patch_pyodide
-        POST_BUILD
+function(create_pyodide_dependencies package_name)
+    add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
+        COMMAND echo "Create dependencies for pyodide package ${NAME}"
         COMMAND echo "export PYODIDE_ROOT=/src;cd /src/pyodide-build/pyodide_build;python mkpkg.py --make-dependencies --find-correct-imports ${package_name};true" > makemeta.sh
-        COMMAND ./run_docker bash makemeta.sh
+        COMMAND ./run_docker bash makemeta.sh        
+        COMMAND touch ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         VERBATIM
-
     )
+    set(META_DEPENDENCIES_OUTPUTS ${META_DEPENDENCIES_OUTPUTS} "${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made" PARENT_SCOPE)
 endfunction()
 
-create_pyodide_meta(trading-strategy)
+
+
+
+# get packages from pypi for pyodide dependencies
+create_pyodide_dependencies(trading-strategy)
 # need nbformat so graphs work
-create_pyodide_meta(nbformat)
+create_pyodide_dependencies(nbformat)
+
 
 
 # build pyodide
@@ -69,37 +87,58 @@ add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide
 COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && ./run_docker PYODIDE_PACKAGES=* make
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
 COMMAND find ${CMAKE_SOURCE_DIR}/pyodide/build/ -not -name *tests*.tar  -exec cp {} ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/ ";"
-DEPENDS ${CMAKE_SOURCE_DIR}/pyodide
+# force rebuild of jupyterlite if we change this
+COMMAND rm -rf ${CMAKE_SOURCE_DIR}/jupyter-src/_output
+DEPENDS get_and_patch_pyodide
+DEPENDS ${META_DEPENDENCIES_OUTPUTS}
 VERBATIM
 )
 
 add_custom_target(build_pyodide
-DEPENDS  ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
+DEPENDS ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
+DEPENDS get_and_patch_pyodide
+DEPENDS ${META_DEPENDENCIES_OUTPUTS}
 )
 
 
-
-add_dependencies(build_pyodide patch_pyodide)
-
+find_package(Python COMPONENTS Interpreter)
 
 
-
-
-# build jupyter-lite site in docs folder for github pages
-add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/docs
-COMMAND ${Python_EXECUTABLE} -m pip install -pre jupyterlite
+# build jupyter-lite site 
+add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/_output
+COMMAND ${Python_EXECUTABLE} -m pip install --pre jupyterlite==${JUPYTERLITE_VERSION}
+COMMAND ${Python_EXECUTABLE} -m pip install wheel
 COMMAND ${Python_EXECUTABLE} -m pip install -U jupyter-src/override_addon
-COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/docs
 COMMAND cd ${CMAKE_SOURCE_DIR}/jupyter-src && rm -rf _output && jupyter lite build
-COMMAND cp -r ${CMAKE_SOURCE_DIR}/jupyter-src/_output/* ${CMAKE_SOURCE_DIR}/docs
-DEPENDS ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
+DEPENDS build_pyodide
+)
+
+set(PYOLITE_WHEEL ${CMAKE_SOURCE_DIR}/jupyter-src/_output/build/pypi/pyolite-${JUPYTERLITE_VERSION}-py3-none-any.whl)
+
+# patch jupyterlite and copy across
+add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/docs/index.html
+# patch matplotlib patch in jupyterlite
+# (until https://github.com/jupyterlite/jupyterlite/pull/654 is merged)
+WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+COMMAND python -m wheel unpack ${PYOLITE_WHEEL} -d pyolite_wheel
+COMMAND cp -r pyolite pyolite_wheel/pyolite-${JUPYTERLITE_VERSION}
+COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/pypi
+COMMAND python -m wheel pack pyolite_wheel/pyolite-${JUPYTERLITE_VERSION} -d ${CMAKE_SOURCE_DIR}/jupyter-src/pypi
+COMMAND rm -rf pyolite_wheel
+# rebuild jupyter site to regenerate hash for patched wheel
+COMMAND cd ${CMAKE_SOURCE_DIR}/jupyter-src && jupyter lite build
+COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/docs
+COMMAND bash -c "cp -r ${CMAKE_SOURCE_DIR}/jupyter-src/_output/* ${CMAKE_SOURCE_DIR}/docs"
+DEPENDS  ${CMAKE_SOURCE_DIR}/jupyter-src/_output
+VERBATIM
 )
 
 add_custom_target(build_jupyter 
-DEPENDS ${CMAKE_SOURCE_DIR}/docs
+DEPENDS ${CMAKE_SOURCE_DIR}/docs/index.html
 )
-add_dependencies(build_jupyter build_pyodide)
 
+
+add_dependencies(build_jupyter build_pyodide)
 
 add_custom_target(final ALL)
 

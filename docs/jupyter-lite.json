@@ -154,6 +154,9 @@
     "licensesUrl": "./lab/api/licenses",
     "litePluginSettings": {
       "@jupyterlite/pyolite-kernel-extension:kernel": {
+        "pipliteUrls": [
+          "./pypi/all.json?sha256=a70f14c427e42bd75eec9014a3cd1510b84086d92a820e580ca9bb02ecbb1dc4"
+        ],
         "pyodideUrl": "./static/pyodide/pyodide.js"
       }
     },
