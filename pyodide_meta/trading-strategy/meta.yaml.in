@@ -21,6 +21,7 @@ requirements:
     - mplfinance
     - scipy
     - trading-strategy-backtrader
+    - nbformat
 about:
   home: https://tradingstrategy.ai
   PyPI: https://pypi.org/project/trading-strategy

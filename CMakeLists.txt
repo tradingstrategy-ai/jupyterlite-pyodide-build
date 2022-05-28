@@ -32,9 +32,7 @@ set(TRADING_STRATEGY_VERSION 0.6.9)
 set(TRADING_STRATEGY_SOURCE https://github.com/joemarshall/trading-strategy/releases/download/0.6.9/trading_strategy-0.6.9-py3-none-any.whl)
 set(TRADING_STRATEGY_SHA256 5bb4268b935323c3285877ac0826ce1f4427a05d27680a5659cffabf73a53257)
 configure_meta(trading-strategy)
-
 ####
-
 
 # first build pyodide v20 plus our additional packages
 
@@ -62,14 +60,15 @@ function(create_pyodide_meta package_name)
 endfunction()
 
 create_pyodide_meta(trading-strategy)
-
+# need nbformat so graphs work
+create_pyodide_meta(nbformat)
 
 
 # build pyodide
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
 COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && ./run_docker PYODIDE_PACKAGES=* make
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
-COMMAND cp -r ${CMAKE_SOURCE_DIR}/pyodide/build/* ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/
+COMMAND shopt -s extglob && cp -r ${CMAKE_SOURCE_DIR}/pyodide/build/!(*.tar|*.zip) ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/
 DEPENDS ${CMAKE_SOURCE_DIR}/pyodide
 )
 
