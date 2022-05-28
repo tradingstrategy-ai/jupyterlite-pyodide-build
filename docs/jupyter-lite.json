@@ -144,13 +144,6 @@
       {
         "extension": "./extension",
         "liteExtension": false,
-        "load": "static/remoteEntry.aa1060b2d1221f8e5688.js",
-        "name": "jupyterlab_pygments",
-        "style": "./style"
-      },
-      {
-        "extension": "./extension",
-        "liteExtension": false,
         "load": "static\\remoteEntry.83c796749c1a515caea8.js",
         "name": "nbdime-jupyterlab"
       }
