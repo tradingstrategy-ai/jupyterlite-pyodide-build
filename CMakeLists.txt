@@ -72,6 +72,17 @@ function(create_pyodide_dependencies package_name)
     set(META_DEPENDENCIES_OUTPUTS ${META_DEPENDENCIES_OUTPUTS} "${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made" PARENT_SCOPE)
 endfunction()
 
+function(create_pyodide_no_dependencies package_name)
+    add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
+        COMMAND echo "Create pyodide package ${NAME}"
+        COMMAND echo "export PYODIDE_ROOT=/src;cd /src/pyodide-build/pyodide_build;python mkpkg.py --find-correct-imports ${package_name};true" > makemeta.sh
+        COMMAND ./run_docker bash makemeta.sh        
+        COMMAND touch ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
+        VERBATIM
+    )
+    set(META_DEPENDENCIES_OUTPUTS ${META_DEPENDENCIES_OUTPUTS} "${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made" PARENT_SCOPE)
+endfunction()
 
 
 
