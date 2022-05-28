@@ -5,19 +5,19 @@
         {
           "comment_text": "",
           "digests": {
-            "md5": "29bad92eff3a6e349bb7673163cedfa9",
-            "sha256": "84b187e2f874beb0cdd03b40e45476cc69ed8842a9f4ce37043307bf7c72346e"
+            "md5": "227108e10f7747109f19957d5eba6e82",
+            "sha256": "982451d821f198f5464e0cce103094e51c91b884b88a711aed5ff6e6beccec51"
           },
           "downloads": -1,
           "filename": "pyolite-0.1.0b7-py3-none-any.whl",
           "has_sig": false,
-          "md5_digest": "29bad92eff3a6e349bb7673163cedfa9",
+          "md5_digest": "227108e10f7747109f19957d5eba6e82",
           "packagetype": "bdist_wheel",
           "python_version": "py3",
           "requires_python": ">=3.10,<3.11",
           "size": 6688,
-          "upload_time": "2022-05-28T22:55:28.524099Z",
-          "upload_time_iso_8601": "2022-05-28T22:55:28.524099Z",
+          "upload_time": "2022-05-28T23:34:12.904099Z",
+          "upload_time_iso_8601": "2022-05-28T23:34:12.904099Z",
           "url": "./pyolite-0.1.0b7-py3-none-any.whl",
           "yanked": false,
           "yanked_reason": null
