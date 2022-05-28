@@ -22,6 +22,7 @@ requirements:
     - scipy
     - trading-strategy-backtrader
     - nbformat
+    - jinja2
 about:
   home: https://tradingstrategy.ai
   PyPI: https://pypi.org/project/trading-strategy
