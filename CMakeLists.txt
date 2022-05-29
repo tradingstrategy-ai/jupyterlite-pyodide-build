@@ -91,6 +91,8 @@ endfunction()
 create_pyodide_dependencies(trading-strategy)
 # need nbformat so graphs work
 create_pyodide_dependencies(nbformat)
+# colorlover is a dependency
+create_pyodide_dependencies(colorlover)
 
 
 
