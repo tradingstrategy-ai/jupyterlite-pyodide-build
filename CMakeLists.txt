@@ -14,6 +14,7 @@ set(JUPYTERLITE_VERSION 0.1.0b7)
 function(configure_meta package_name)
     configure_file(${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml.in ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml)
     add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.meta_configured
+        COMMAND mkdir ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}
         COMMAND cp ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/meta.yaml
         # force rebuild if meta file changes
         COMMAND rm -rf ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/build/
@@ -98,7 +99,7 @@ add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide
 COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && ./run_docker PYODIDE_PACKAGES=* make
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
 COMMAND find ${CMAKE_SOURCE_DIR}/pyodide/build/ -not -name *tests*.tar  -exec cp {} ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/ ";"
-# force rebuild of jupyterlite if we change this
+# force rebuild of jupyterlite if we change pyodide at all
 COMMAND rm -rf ${CMAKE_SOURCE_DIR}/jupyter-src/_output
 DEPENDS get_and_patch_pyodide
 DEPENDS ${META_DEPENDENCIES_OUTPUTS}
