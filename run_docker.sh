@@ -9,11 +9,11 @@ PYODIDE_PREBUILT_IMAGE_TAG="0.20.0"
 DEFAULT_PYODIDE_DOCKER_IMAGE="${PYODIDE_IMAGE_REPO}/pyodide-env:${PYODIDE_IMAGE_TAG}"
 PYODIDE_VERSION=${PYODIDE_PREBUILT_IMAGE_TAG}
 PYODIDE_SOURCE=https://github.com/pyodide/pyodide.git
-JUPYTERLITE_VERSION="0.1.0b7"
+JUPYTERLITE_VERSION="0.1.0b9"
 
 docker build . --build-arg base_image=${DEFAULT_PYODIDE_DOCKER_IMAGE} -t tradingstrategy:jupyterlite && \
 
-docker run  -it -w /home/docker/src --pull==never -v "$PWD":"/home/docker/src"  tradingstrategy:jupyterlite bash -i -c "cmake . -D PYODIDE_VERSION=${PYODIDE_VERSION} -D PYODIDE_SOURCE=${PYODIDE_SOURCE} -D JUPYTERLITE_VERSION=${JUPYTERLITE_VERSION} -D CMAKE_VERBOSE_MAKEFILE=ON" 
-docker run  -it -w /home/docker/src --pull==never -v "$PWD":"/home/docker/src"   tradingstrategy:jupyterlite bash -i -c "make -j 10"
-docker run  -it -w /home/docker/src --pull==never -v "$PWD":"/home/docker/src"   tradingstrategy:jupyterlite bash
+docker run  -it -w /home/docker/src --pull==never -v "$PWD":"/home/docker/src"  tradingstrategy:jupyterlite bash -i -c "export MAKE=make && cmake . -D PYODIDE_VERSION=${PYODIDE_VERSION} -D PYODIDE_SOURCE=${PYODIDE_SOURCE} -D JUPYTERLITE_VERSION=${JUPYTERLITE_VERSION} -DCMAKE_MAKE_PROGRAM=/usr/bin/make " 
+docker run  -it -w /home/docker/src --pull==never -v "$PWD":"/home/docker/src"   tradingstrategy:jupyterlite bash -i -c "export MAKE=make && export PYODIDE_JOBS=10 && make -j 10"
+docker run  -it -w /home/docker/src --pull==never -v "$PWD":"/home/docker/src"   tradingstrategy:jupyterlite bash 
 

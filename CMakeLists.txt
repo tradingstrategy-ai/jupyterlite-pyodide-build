@@ -7,7 +7,10 @@ include(ExternalProject) # ExternalProject_Add
 #### set versions of external packages in run_docker.sh - defaults are set here in 
 #### case you build manually using this cmakefile
 
-set(JUPYTERLITE_VERSION "0.1.0b7" CACHE STRING "Version of jupyterlite you are building against")
+execute_process(COMMAND  dirname $(find ${CMAKE_SOURCE_DIR}/pyodide/cpython -name Python.h | head -1 ) 
+    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR)
+
+set(JUPYTERLITE_VERSION "0.1.0b9" CACHE STRING "Version of jupyterlite you are building against")
 set(PYODIDE_VERSION "0.20.0" CACHE STRING "Version of pyodide you are building against")
 set(PYODIDE_SOURCE "https://github.com/pyodide/pyodide.git" CACHE STRING "Pyodide git source")
 
@@ -30,7 +33,7 @@ endfunction()
 # pyarrow source
 set(PYARROW_WASM_VERSION 7.0.0)
 set(PYARROW_WASM_SOURCE https://github.com/joemarshall/pyarrow-wasm/archive/refs/tags/7.0.0.tar.gz)
-set(PYARROW_WASM_SHA256 46bb7d2fd2498ec59814d6ad3e910ce5b93614225f8031bdeacca954375c4c38)
+set(PYARROW_WASM_SHA256 55dc094a1630508b1c37f8337c8edf80f0472169863d6c6521a719182a415d3b)
 configure_meta(pyarrow)
 
 
@@ -63,7 +66,7 @@ function(create_pyodide_dependencies package_name)
     add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
         COMMAND echo "Create dependencies for pyodide package ${NAME}"
-        COMMAND export PYODIDE_ROOT=${CMAKE_SOURCE_DIR}/pyodide && cd pyodide-build/pyodide_build && python mkpkg.py --make-dependencies --find-correct-imports ${package_name} || true
+        COMMAND cd pyodide-build/pyodide_build && python mkpkg.py --make-dependencies --find-correct-imports ${package_name} || true
         COMMAND touch ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         VERBATIM
     )
@@ -74,7 +77,7 @@ function(create_pyodide_no_dependencies package_name)
     add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
         COMMAND echo "Create pyodide package ${NAME}"
-        COMMAND export PYODIDE_ROOT=${CMAKE_SOURCE_DIR}/pyodide && cd pyodide-build/pyodide_build && python mkpkg.py --find-correct-imports ${package_name} || true
+        COMMAND cd pyodide-build/pyodide_build && python mkpkg.py --find-correct-imports ${package_name} || true
         COMMAND touch ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         VERBATIM
     )
@@ -94,7 +97,7 @@ create_pyodide_dependencies(colorlover)
 
 # build pyodide
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
-COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && export PYODIDE_ROOT=${CMAKE_SOURCE_DIR}/pyodide && export PYODIDE_PACKAGES=* &&  make
+COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && export PYODIDE_PACKAGES=* &&  make
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
 COMMAND find ${CMAKE_SOURCE_DIR}/pyodide/build/ -not -name *tests*.tar  -exec cp {} ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/ ";"
 # force rebuild of jupyterlite if we change pyodide at all
@@ -124,15 +127,6 @@ set(PYOLITE_WHEEL ${CMAKE_SOURCE_DIR}/jupyter-src/_output/build/pypi/pyolite-${J
 
 # patch jupyterlite and copy across
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/docs/index.html
-# patch matplotlib patch in jupyterlite
-# (until https://github.com/jupyterlite/jupyterlite/pull/654 is merged)
-WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-COMMAND python -m wheel unpack ${PYOLITE_WHEEL} -d pyolite_wheel
-COMMAND cp -r pyolite pyolite_wheel/pyolite-${JUPYTERLITE_VERSION}
-COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/pypi
-COMMAND python -m wheel pack pyolite_wheel/pyolite-${JUPYTERLITE_VERSION} -d ${CMAKE_SOURCE_DIR}/jupyter-src/pypi
-COMMAND rm -rf pyolite_wheel
-# rebuild jupyter site to regenerate hash for patched wheel
 COMMAND cd ${CMAKE_SOURCE_DIR}/jupyter-src && jupyter lite build
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/docs
 COMMAND bash -c "cp -r ${CMAKE_SOURCE_DIR}/jupyter-src/_output/* ${CMAKE_SOURCE_DIR}/docs"
