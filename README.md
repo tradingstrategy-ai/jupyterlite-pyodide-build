@@ -2,8 +2,8 @@
 
 This repo builds a GitHub Pages site to run the examples from the trading-strategy pypi module.
 
-Build by running run_make.sh. This creates a virtual environment with the required packages for the build, then
-calls cmake. You need conda (or mamba) to run the build process.
+Build by running `run_docker.sh`. This creates a docker container with the required packages for the build, then
+calls cmake. 
 
 You can also build with:
 
@@ -11,13 +11,16 @@ You can also build with:
 cmake .
 cmake --build .
 ```
-for which you will need:
 
-python 3.9 or later
-wheel
-pkg_info
+Which needs:
 
-Check out the run_make.sh  for the
+- python 3.9 or later
+- cmake 2.23 `sudo bash -c "wget -O - https://github.com/Kitware/CMake/releases/download/v3.23.2/cmake-3.23.2-linux-x86_64.tar.gz | tar -xz --strip-components 1 -C /usr/"`
+- wheel `pip install wheel`
+- pkg_info  `pip install pkg_info`
+- jupyterlite `pip install -pre jupyterlite`
+- custom override addon for jupyterlite (included in this repo `pip install jupyter-site/override_addon` )
+
 
 This builds three things:
 1) Pyodide (WASM based CPython), along with various custom modules which are dependencies of trading-strategy. 
@@ -38,13 +41,15 @@ This is a stock build of pyodide v20.0, with the exception of added packages
     Jupyter-lite is a jupyter notebook environment which uses the pyodide kernel to allow you to run iPython notebooks
     entirely in the browser. We use a stock build here, currently version 0.1.0b7.
 
-Versions of all packages used are set in CMakeLists.txt near the top. Edit these to get a newer version.
+# Updating source package versions / repos
+
+Versions of pyodide and jupyterlite are set in run_docker.sh. 
+Versions of the subpackages installed into pyodide (pyarrow, requests etc.) are set in CMakeLists.txt near the top. 
 
 # Running in development mode
 To run the example site, you can either serve it using `jupyterlite serve`
 
 ```
-activate jupyterlite-build # the build env made by run_build.sh
 cd jupyter-src
 jupyterlite serve 
 ```
