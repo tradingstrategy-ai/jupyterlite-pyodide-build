@@ -127,7 +127,7 @@ set(PYOLITE_WHEEL ${CMAKE_SOURCE_DIR}/jupyter-src/_output/build/pypi/pyolite-${J
 
 # patch jupyterlite and copy across
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/docs/index.html
-COMMAND cd ${CMAKE_SOURCE_DIR}/jupyter-src && jupyter lite build
+COMMAND cd ${CMAKE_SOURCE_DIR}/jupyter-src && rm -rf _output && rm .jupyterlite.doit.db && rm -rf .cache && jupyter lite build --contents=contents
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/docs
 COMMAND bash -c "cp -r ${CMAKE_SOURCE_DIR}/jupyter-src/_output/* ${CMAKE_SOURCE_DIR}/docs"
 DEPENDS  ${CMAKE_SOURCE_DIR}/jupyter-src/_output
