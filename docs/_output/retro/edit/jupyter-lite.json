@@ -1,8 +1,0 @@
-{
-  "jupyter-config-data": {
-    "faviconUrl": "./favicon.ico",
-    "fullStaticUrl": "../../build",
-    "retroPage": "edit"
-  },
-  "jupyter-lite-schema-version": 0
-}
