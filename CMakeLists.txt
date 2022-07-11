@@ -40,7 +40,7 @@ configure_meta(pyarrow)
 # requests source
 set(PYODIDE_REQUESTS_VERSION 2.26.0)
 set(PYODIDE_REQUESTS_SOURCE https://github.com/joemarshall/pyodide_requests/archive/refs/tags/pyodide_2.26.0.tar.gz)
-set(PYODIDE_REQUESTS_SHA256 bd920d83334c11abfe3852c84b1c39800ea656dcba163472b108b2855739f886)
+set(PYODIDE_REQUESTS_SHA256 89dc23bf614f06e150e3441af64f6fadbb9adc9903874c3539a15ea976c781e0)
 configure_meta(requests)
 
 # trading strategy source
