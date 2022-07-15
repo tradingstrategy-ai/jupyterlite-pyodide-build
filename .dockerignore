@@ -1,0 +1,6 @@
+/*
+!/jupyter-src
+
+/jupyter-src/*
+!/jupyter-src/override_addon/**
+!/jupyter-src/requirements.txt
