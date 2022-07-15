@@ -7,8 +7,9 @@ include(ExternalProject) # ExternalProject_Add
 #### set versions of external packages in run_docker.sh - defaults are set here in 
 #### case you build manually using this cmakefile
 
-execute_process(COMMAND  dirname $(find ${CMAKE_SOURCE_DIR}/pyodide/cpython -name Python.h | head -1 ) 
-    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR)
+execute_process(COMMAND  bash -c "dirname $(find ${CMAKE_SOURCE_DIR}/pyodide/cpython -name Python.h | head -1 )" 
+    OUTPUT_VARIABLE PYTHON_INCLUDE_DIR
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 set(JUPYTERLITE_VERSION "0.1.0b9" CACHE STRING "Version of jupyterlite you are building against")
 set(PYODIDE_VERSION "0.20.0" CACHE STRING "Version of pyodide you are building against")
@@ -30,23 +31,33 @@ function(configure_meta package_name)
 endfunction()
 
 
+function(get_url_sha256 dest url)
+execute_process(
+    COMMAND bash -c "wget ${url} -qO- | sha256sum"
+    OUTPUT_VARIABLE retval
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+string(REGEX REPLACE "[ \t\r\n\-]" "" retval ${retval})
+set(${dest} ${retval} PARENT_SCOPE)
+endfunction()
+
 # pyarrow source
 set(PYARROW_WASM_VERSION 7.0.0)
 set(PYARROW_WASM_SOURCE https://github.com/joemarshall/pyarrow-wasm/archive/refs/tags/7.0.0.tar.gz)
-set(PYARROW_WASM_SHA256 55dc094a1630508b1c37f8337c8edf80f0472169863d6c6521a719182a415d3b)
+get_url_sha256(PYARROW_WASM_SHA256 ${PYARROW_WASM_SOURCE})
 configure_meta(pyarrow)
 
 
 # requests source
 set(PYODIDE_REQUESTS_VERSION 2.26.0)
 set(PYODIDE_REQUESTS_SOURCE https://github.com/joemarshall/pyodide_requests/archive/refs/tags/pyodide_2.26.0.tar.gz)
-set(PYODIDE_REQUESTS_SHA256 89dc23bf614f06e150e3441af64f6fadbb9adc9903874c3539a15ea976c781e0)
+get_url_sha256(PYODIDE_REQUESTS_SHA256 ${PYODIDE_REQUESTS_SOURCE})
 configure_meta(requests)
 
 # trading strategy source
 set(TRADING_STRATEGY_VERSION 0.6.9)
 set(TRADING_STRATEGY_SOURCE https://github.com/joemarshall/trading-strategy/releases/download/0.6.9/trading_strategy-0.6.9-py3-none-any.whl)
-set(TRADING_STRATEGY_SHA256 5bb4268b935323c3285877ac0826ce1f4427a05d27680a5659cffabf73a53257)
+get_url_sha256(TRADING_STRATEGY_SHA256 ${TRADING_STRATEGY_SOURCE})
 configure_meta(trading-strategy)
 ####
 
