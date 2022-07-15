@@ -116,6 +116,16 @@ DEPENDS ${META_DEPENDENCIES_OUTPUTS}
 
 find_package(Python COMPONENTS Interpreter)
 
+# build jupyter notebook-webcomponent
+add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/notebook-webcomponent/dist/build/notebook.js
+COMMAND cd ${CMAKE_SOURCE_DIR}/notebook-webcomponent && yarn install && yarn build
+DEPENDS build_pyodide
+)
+
+add_custom_target(build_webcomponent 
+DEPENDS ${CMAKE_SOURCE_DIR}/notebook-webcomponent/dist/build/notebook.js
+)
+
 
 # build jupyter-lite site 
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/_output
@@ -143,5 +153,5 @@ add_dependencies(build_jupyter build_pyodide)
 
 add_custom_target(final ALL)
 
-add_dependencies(final build_jupyter)
+add_dependencies(final build_jupyter build_webcomponent)
 
