@@ -10,7 +10,7 @@ DEFAULT_PYODIDE_DOCKER_IMAGE="${PYODIDE_IMAGE_REPO}/pyodide-env:${PYODIDE_IMAGE_
 PYODIDE_VERSION=${PYODIDE_PREBUILT_IMAGE_TAG}
 PYODIDE_SOURCE=https://github.com/pyodide/pyodide.git
 JUPYTERLITE_VERSION="0.1.0b9"
-DOCKEROPT=
+DOCKEROPT=-t
 
 docker build . --build-arg base_image=${DEFAULT_PYODIDE_DOCKER_IMAGE} -t tradingstrategy:jupyterlite && \
 if [ -t 0 ] ; then
