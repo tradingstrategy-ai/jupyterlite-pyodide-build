@@ -14,9 +14,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: bash ./build_docker.sh
     - name: fix permissions
       run: sudo chmod -R 777 .
+    - name: Build the Docker image
+      run: bash ./build_docker.sh
     - name: Run cmake in docker image
       run: bash ./run_docker.sh
