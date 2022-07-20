@@ -21,6 +21,12 @@ jobs:
       shell: bash
     - name: fix permissions
       run: sudo chmod -R 777 .
+    - name: cache docker image
+      uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+      continue-on-error: true
+      with:
+        key: ${{ runner.os }}-${{ hashFiles('Dockerfile')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
     - name: Build the Docker image
       run: bash ./build_docker.sh
     - name: Cache Pyodide
@@ -28,6 +34,6 @@ jobs:
       uses: actions/cache@v3
       with:
         path: pyodide
-        key: ${{ runner.os }}-${{ hashFiles('pyodide_meta/**')}}-${{ steps.get-pyodide-versions.outputs.pyver }} }}
+        key: ${{ runner.os }}-${{ hashFiles('pyodide_meta/**')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
     - name: Run cmake in docker image (using pyodide from cache if there)
       run: bash ./run_docker.sh
