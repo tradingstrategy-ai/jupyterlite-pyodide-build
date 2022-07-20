@@ -20,7 +20,7 @@ jobs:
         source envs.sh && echo ::set-output name=pyver::${DEFAULT_PYODIDE_DOCKER_IMAGE}-${PYODIDE_VERSION}
       shell: bash
     - name: fix permissions
-      run: sudo chmod -R 777 .PYODIDE_BUILD_DOWNLOAD
+      run: sudo chmod -R 777 .
     - name: Build the Docker image
       run: bash ./build_docker.sh
     - name: Cache Pyodide
