@@ -1,5 +1,6 @@
 source envs.sh
-#mkdir -p pyodide/build
+set -e
+mkdir -p pyodide/build
 
 wget ${PYODIDE_BUILD_DOWNLOAD} -O - | tar -xj --strip-components 1 -C pyodide/build
 
