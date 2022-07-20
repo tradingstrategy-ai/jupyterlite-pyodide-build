@@ -14,9 +14,20 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: get pyodide versions
+      id: get-pyodide-versions
+      run: |
+        source envs.sh && echo ::set-output name=pyver::${DEFAULT_PYODIDE_DOCKER_IMAGE}-${PYODIDE_VERSION}
+      shell: bash
     - name: fix permissions
-      run: sudo chmod -R 777 .
+      run: sudo chmod -R 777 .PYODIDE_BUILD_DOWNLOAD
     - name: Build the Docker image
       run: bash ./build_docker.sh
-    - name: Run cmake in docker image
+    - name: Cache Pyodide
+      id: cache-pyodide
+      uses: actions/cache@v3
+      with:
+        path: pyodide
+        key: ${{ runner.os }}-${{ hashFiles('pyodide_meta/**')-${{ steps.get-pyodide-versions.outputs. }} }}
+    - name: Run cmake in docker image (using pyodide from cache if there)
       run: bash ./run_docker.sh
