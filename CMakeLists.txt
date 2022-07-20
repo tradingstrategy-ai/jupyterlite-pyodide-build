@@ -66,13 +66,18 @@ configure_meta(trading-strategy)
 # get and patch pyodide v20 with our packages
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide 
 COMMAND git clone --depth 1 --branch ${PYODIDE_VERSION} ${PYODIDE_SOURCE} 
-COMMAND bash ./get_built_pyodide.sh
 COMMAND git config apply.whitespace nowarn && cd pyodide && git apply ${CMAKE_SOURCE_DIR}/patches/pyodide-build.patch 
 COMMAND rm -rf ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide )
+
+add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/scipy/build/.packaged
+COMMAND bash ./get_built_pyodide.sh
+DEPENDS ${CMAKE_SOURCE_DIR}/pyodide
+)
 
 
 add_custom_target(get_and_patch_pyodide 
     DEPENDS ${CMAKE_SOURCE_DIR}/pyodide
+    DEPENDS ${CMAKE_SOURCE_DIR}/pyodide/packages/scipy/build/.packaged
 )
 
 function(create_pyodide_dependencies package_name)
