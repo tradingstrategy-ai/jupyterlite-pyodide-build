@@ -28,6 +28,7 @@ jobs:
       with:
         key: ${{ runner.os }}-${{ hashFiles('Dockerfile')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
     - name: Build the Docker image
+      id: builddocker
       run: bash ./build_docker.sh
     - name: Cache Pyodide
       id: cache-pyodide
@@ -37,3 +38,9 @@ jobs:
         key: ${{ runner.os }}-${{ hashFiles('pyodide_meta/**')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
     - name: Run cmake in docker image (using pyodide from cache if there)
       run: bash ./run_docker.sh
+      continue-on-error: true
+    - name: Check docker build
+      run:  echo "Docker build failed - cancelling caching" && false
+      if: steps.builddocker.outcome != 'success'
+    - name: Check if pyodide build exists
+      run:  ls pyodide/build/trading_strategy_backtrader-0.1-py3-none-any.whl
