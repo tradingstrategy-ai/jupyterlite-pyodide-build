@@ -67,6 +67,7 @@ configure_meta(trading-strategy)
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide 
 COMMAND git clone --depth 1 --branch ${PYODIDE_VERSION} ${PYODIDE_SOURCE} 
 COMMAND git config apply.whitespace nowarn && cd pyodide && git apply ${CMAKE_SOURCE_DIR}/patches/pyodide-build.patch 
+COMMAND bash ./get_built_pyodide.sh
 COMMAND rm -rf ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide )
 
 add_custom_target(get_and_patch_pyodide 
@@ -108,8 +109,8 @@ create_pyodide_dependencies(colorlover)
 
 # build pyodide, including getting prebuilt packages for everything else once pyodide and numpy are built
 add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/pyodide.js
+# just build numpy first
 COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && export PYODIDE_PACKAGES="numpy" &&  make
-COMMAND bash ./get_built_pyodide.sh
 COMMAND cd ${CMAKE_SOURCE_DIR}/pyodide && export PYODIDE_PACKAGES=* &&  make
 COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide
 COMMAND find ${CMAKE_SOURCE_DIR}/pyodide/build/ -not -name *tests*.tar  -exec cp {} ${CMAKE_SOURCE_DIR}/jupyter-src/static/pyodide/ ";"
