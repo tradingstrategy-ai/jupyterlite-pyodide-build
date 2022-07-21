@@ -1,6 +1,6 @@
 /*
 !/jupyter-src
-
+!set_docker_id.sh
 /jupyter-src/*
 !/jupyter-src/override_addon/**
 !/jupyter-src/requirements.txt

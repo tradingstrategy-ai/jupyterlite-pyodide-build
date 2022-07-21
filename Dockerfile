@@ -18,5 +18,6 @@ COPY ./jupyter-src/requirements.txt /tmp/requirements.txt
 RUN sudo pip install -r /tmp/requirements.txt 
 RUN sudo pip install /tmp/override_addon numpy
 RUN echo 'export PYODIDE_ROOT=/home/docker/src/pyodide' >> .bashrc
+COPY ./set_docker_id.sh /home/docker
 VOLUME /home/docker/src
-
+ENTRYPOINT ["/home/docker/set_docker_id.sh"]
