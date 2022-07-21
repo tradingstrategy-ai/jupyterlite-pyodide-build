@@ -17,7 +17,6 @@ COPY ./jupyter-src/override_addon /tmp/override_addon
 COPY ./jupyter-src/requirements.txt /tmp/requirements.txt
 RUN sudo pip install -r /tmp/requirements.txt 
 RUN sudo pip install /tmp/override_addon numpy
-RUN sudo npm install --global yarn
 RUN echo 'export PYODIDE_ROOT=/home/docker/src/pyodide' >> .bashrc
 VOLUME /home/docker/src
 
