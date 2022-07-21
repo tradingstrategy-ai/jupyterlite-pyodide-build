@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main","citest"]
   pull_request:
     branches: [ "main" ]
 
@@ -14,5 +14,35 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    - name: get pyodide versions
+      id: get-pyodide-versions
+      run: |
+        source envs.sh && echo ::set-output name=pyver::${DEFAULT_PYODIDE_DOCKER_IMAGE}-${PYODIDE_VERSION}
+      shell: bash
+    - name: fix permissions
+      run: sudo chmod -R 777 .
+    - name: cache docker image
+      uses: satackey/action-docker-layer-caching@v0.0.11
+      # Ignore the failure of a step and avoid terminating the job.
+      continue-on-error: true
+      with:
+        key: ${{ runner.os }}-${{ hashFiles('Dockerfile')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
     - name: Build the Docker image
-      run: mkdir test && ls
+      id: builddocker
+      run: bash ./build_docker.sh
+    - name: Cache Pyodide
+      id: cache-pyodide
+      continue-on-error: true
+      uses: actions/cache@v3
+      with:
+        path: pyodide
+        key: ${{ runner.os }}-${{ hashFiles('pyodide_meta/**')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
+    - name: Run cmake in docker image (using pyodide from cache if there)
+      run: bash ./run_docker.sh
+    - name: fix permissions on pyodide so it caches okay
+      run: sudo chmod -R 777 pyodide
+    - name: Check if pyodide build exists and delete it if not finished so cache doesn't get updated
+      run:  ls pyodide/build/pyarrow*.whl || rm pyodide -rf    
+      if: always()
