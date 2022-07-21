@@ -9,7 +9,7 @@ if [ -t 0 ] ; then
     DOCKEROPT=-it
 fi
 
-export DOCKEROPT="${DOCKEROPT} -e OUTER_GID=$(id -g ${USER}) -e OUTER_UID=$(id -u ${user})"
+export DOCKEROPT="${DOCKEROPT} -u $(id -u ${USER}):$(id -g ${user})"
 git submodule update --init --recursive
 
 
