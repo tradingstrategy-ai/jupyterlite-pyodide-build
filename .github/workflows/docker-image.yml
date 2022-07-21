@@ -46,3 +46,18 @@ jobs:
     - name: Check if pyodide build exists and delete it if not finished so cache doesn't get updated
       run:  ls pyodide/build/pyarrow*.whl || rm pyodide -rf    
       if: always()
+    - name: upload pyodide build files
+      uses: actions/upload-artifact@v3
+      with:
+        name: pyodide build
+        path: pyodide/build
+    - name: upload jupyterlite site files
+      uses: actions/upload-artifact@v3
+      with:
+        name: jupyterlite build
+        path: docs        
+    - name: upload notebook webcomponent files
+      uses: actions/upload-artifact@v3
+      with:
+        name: notebook dist
+        path: notebook-webcomponent/dist/             
