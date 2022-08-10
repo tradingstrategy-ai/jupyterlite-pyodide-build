@@ -15,8 +15,21 @@ set(JUPYTERLITE_VERSION "0.1.0b9" CACHE STRING "Version of jupyterlite you are b
 set(PYODIDE_VERSION "0.20.0" CACHE STRING "Version of pyodide you are building against")
 set(PYODIDE_SOURCE "https://github.com/pyodide/pyodide.git" CACHE STRING "Pyodide git source")
 
+# this is used to stop configure_meta forcing rebuild of packages if the metafile.in hasn't changed  
+function(configure_file_if_changed src dest)
+    configure_file(${src} ${dest}.tmp)
+    execute_process( COMMAND ${CMAKE_COMMAND} -E compare_files ${dest}.tmp ${dest}
+                 RESULT_VARIABLE compare_result
+    )
+    if( compare_result EQUAL 0)
+        message("Not configuring ${src} ${dest}")
+    else()
+        configure_file(${src} ${dest})
+    endif()
+endfunction()
+
 function(configure_meta package_name)
-    configure_file(${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml.in ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml)
+    configure_file_if_changed(${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml.in ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml)
     add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.meta_configured
         COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}
         COMMAND cp ${CMAKE_SOURCE_DIR}/pyodide_meta/${package_name}/meta.yaml ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/meta.yaml
