@@ -37,7 +37,9 @@ jobs:
       continue-on-error: true
       uses: actions/cache@v3
       with:
-        path: pyodide
+        path: |
+          pyodide
+          pyodide_meta/*/*.meta
         key: ${{ runner.os }}-${{ hashFiles('pyodide_meta/**')}}-${{ steps.get-pyodide-versions.outputs.pyver }} 
     - name: Run cmake in docker image (using pyodide from cache if there)
       run: bash ./run_docker.sh
