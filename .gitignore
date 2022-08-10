@@ -1,3 +1,5 @@
 # pyodide build directories
 /pyodide/
 /jupyter-src/static/pyodide
+# jupyterlite output directory
+/docs/
