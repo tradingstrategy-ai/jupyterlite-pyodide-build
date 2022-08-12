@@ -78,5 +78,5 @@ jobs:
       with:
         name: notebook dist
         path: notebook-webcomponent
-  - uses: stefanzweifel/git-auto-commit-action@v4
+    - uses: stefanzweifel/git-auto-commit-action@v4
     
