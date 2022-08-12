@@ -3,6 +3,8 @@ name: Docker Image CI
 on:
   push:
     branches: [ "main"]
+    tags: 
+      - "v*.*.*"
   pull_request:
     branches: [ "main" ]
 
@@ -79,4 +81,29 @@ jobs:
         name: notebook dist
         path: notebook-webcomponent
     - uses: stefanzweifel/git-auto-commit-action@v4
-    
+  make_release_on_new_tag:
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: build    
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: jupyterlite build
+          path: jupyterlite_site    
+      - uses: actions/download-artifact@v3
+        with:
+          name: notebook dist    
+          path: notebook
+      - uses: actions/download-artifact@v3
+        with:
+          name: pyodide build
+          path: pyodide
+      - name: Zip folders
+        run:  tar -czvf pyodide.tgz pyodide && tar -czvf jupyterlite_site.tgz jupyterlite_site && tar -czvf notebook.tgz notebook
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            notebook.tgz
+            pyodide.tgz
+            jupyterlite_site.tgz                
