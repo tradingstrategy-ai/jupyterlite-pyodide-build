@@ -56,14 +56,14 @@ endfunction()
 
 # pyarrow source
 set(PYARROW_WASM_VERSION 7.0.0)
-set(PYARROW_WASM_SOURCE https://github.com/joemarshall/pyarrow-wasm/archive/refs/tags/7.0.0.tar.gz)
+set(PYARROW_WASM_SOURCE https://github.com/tradingstrategy-ai/pyarrow-wasm/archive/refs/tags/7.0.0.tar.gz)
 get_url_sha256(PYARROW_WASM_SHA256 ${PYARROW_WASM_SOURCE})
 configure_meta(pyarrow)
 
 
 # requests source
 set(PYODIDE_REQUESTS_VERSION 2.26.0)
-set(PYODIDE_REQUESTS_SOURCE https://github.com/joemarshall/pyodide_requests/archive/refs/tags/pyodide_2.26.0.tar.gz)
+set(PYODIDE_REQUESTS_SOURCE https://github.com/tradingstrategy-ai/pyodide_requests/archive/refs/tags/pyodide_2.26.0.tar.gz)
 get_url_sha256(PYODIDE_REQUESTS_SHA256 ${PYODIDE_REQUESTS_SOURCE})
 configure_meta(requests)
 
