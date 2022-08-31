@@ -3,4 +3,4 @@
 	url = https://github.com/pyodide/pyodide
 [submodule "notebook-webcomponent"]
 	path = notebook-webcomponent
-	url = https://github.com/joemarshall/notebook-webcomponent
+	url = https://github.com/tradingstrategy-ai/notebook-webcomponent
