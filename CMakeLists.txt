@@ -68,8 +68,8 @@ get_url_sha256(PYODIDE_REQUESTS_SHA256 ${PYODIDE_REQUESTS_SOURCE})
 configure_meta(requests)
 
 # trading strategy source
-set(TRADING_STRATEGY_VERSION 0.6.9)
-set(TRADING_STRATEGY_SOURCE https://github.com/joemarshall/trading-strategy/releases/download/0.6.9/trading_strategy-0.6.9-py3-none-any.whl)
+set(TRADING_STRATEGY_VERSION 0.7.1)
+set(TRADING_STRATEGY_SOURCE https://23cb-59-153-220-125.ap.ngrok.io/trading_strategy-0.7.1-py3-none-any.whl)
 get_url_sha256(TRADING_STRATEGY_SHA256 ${TRADING_STRATEGY_SOURCE})
 configure_meta(trading-strategy)
 ####
