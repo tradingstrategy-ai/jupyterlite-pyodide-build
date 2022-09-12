@@ -20,6 +20,7 @@ requirements:
     - chart-studio
     - mplfinance
     - scipy
+    - jsonlines
     - trading-strategy-backtrader
     - nbformat
     - Jinja2
