@@ -3,3 +3,15 @@
 /jupyter-src/static/pyodide
 # jupyterlite output directory
 /docs/
+
+# PyCharm
+.idea
+
+# CMake
+CMakeCache.txt
+CmakeFiles/
+cmake_install.cmake
+Makefile
+
+# Generated from .in
+pyodide_meta/**/*.yaml

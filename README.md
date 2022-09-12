@@ -2,9 +2,11 @@
 
 This repo builds a GitHub Pages site to run the examples from the trading-strategy pypi module.
 
-Build by running 
-```
-run_docker.sh
+Build by running
+
+```shell
+git submodule update --init --recursive    
+./run_docker.sh
 ```
 
 This creates a docker container with the required packages for the build, then
