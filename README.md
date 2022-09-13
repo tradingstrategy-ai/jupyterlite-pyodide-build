@@ -50,7 +50,7 @@ cd docs
 python3 -m http.server
 ```
 
-Or with caddy:
+Or with Caddy:
 
 ```shell
 cd docs
