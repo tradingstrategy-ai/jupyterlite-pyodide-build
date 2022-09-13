@@ -39,14 +39,22 @@ Versions of the subpackages installed into pyodide (pyarrow, requests etc.) are 
 # Running in development mode
 To run the example site, you can either serve it using `jupyterlite serve`
 
-```
+```shell
 cd jupyter-src
 jupyterlite serve 
 ```
 or just serve the docs folder with python
-```
+
+```shell
 cd docs
-python -m http.server
+python3 -m http.server
+```
+
+Or with caddy:
+
+```shell
+cd docs
+caddy file-server --domain dokwon.tradingstrategy.ai
 ```
 
 Then connect to that site in a browser.
