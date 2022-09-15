@@ -12,7 +12,7 @@ execute_process(COMMAND  bash -c "dirname $(find ${CMAKE_SOURCE_DIR}/pyodide/cpy
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
 set(JUPYTERLITE_VERSION "0.1.0b9" CACHE STRING "Version of jupyterlite you are building against")
-set(PYODIDE_VERSION "0.21.2" CACHE STRING "Version of pyodide you are building against")
+set(PYODIDE_VERSION "0.20.0" CACHE STRING "Version of pyodide you are building against")
 set(PYODIDE_SOURCE "https://github.com/pyodide/pyodide.git" CACHE STRING "Pyodide git source")
 
 # this is used to stop configure_meta forcing rebuild of packages if the metafile.in hasn't changed  
