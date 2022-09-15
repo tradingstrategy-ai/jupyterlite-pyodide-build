@@ -1,0 +1,24 @@
+package:
+  name: trading-strategy
+  version: ${TRADING_STRATEGY_VERSION}
+source:
+  url: ${TRADING_STRATEGY_SOURCE}
+  sha256: ${TRADING_STRATEGY_SHA256}
+test:
+  imports:
+    - tradingstrategy
+requirements:
+  run:
+    - dataclasses-json
+    - pandas
+    - pyarrow
+    - tqdm
+    - jsonlines
+    - plotly
+about:
+  home: https://tradingstrategy.ai
+  PyPI: https://pypi.org/project/trading-strategy
+  summary:
+    Algorithmic trading and quantitative financial analysis framework for decentralised
+    exchanges and blockchains
+  license: AGPL
