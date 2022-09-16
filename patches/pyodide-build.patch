@@ -1,5 +1,5 @@
 diff --git a/pyodide-build/pyodide_build/mkpkg.py b/pyodide-build/pyodide_build/mkpkg.py
-index f1ed3fe..9d87e89 100755
+index f1ed3fe..0fcbb12 100755
 --- a/pyodide-build/pyodide_build/mkpkg.py
 +++ b/pyodide-build/pyodide_build/mkpkg.py
 @@ -9,11 +9,14 @@ import sys
@@ -178,7 +178,7 @@ index f1ed3fe..9d87e89 100755
  ):
      """
      Creates a template that will work for most pure Python packages,
-@@ -125,10 +267,106 @@ def make_package(
+@@ -125,10 +267,120 @@ def make_package(
      license = pypi_metadata["info"]["license"]
      pypi = "https://pypi.org/project/" + package
  
@@ -250,10 +250,24 @@ index f1ed3fe..9d87e89 100755
 +
 +    package_dir = packages_dir / package
 +
++    package_dir.mkdir(parents=True, exist_ok=True)
++    meta_path = package_dir / "meta.yaml"
++    
++    if meta_path.exists():
++        if make_dependencies:
++            # load version from meta.yaml here so we get correct deps
++            yaml2=YAML()
++            existing_info=yaml2.load(meta_path.read_bytes())
++            version=existing_info["package"]["version"]
++        else:
++            raise MkpkgFailedException(f"The package {package} already exists")
++
 +    dist=YamlDistribution(package_dir,project_name=package,version=version)
 +    requires_packages=dist.requires(extras=our_extras)
 +
 +    env=EnvironmentHelper()
++
++
 +
 +    if make_dependencies:
 +        ws= pkg_resources.WorkingSet([])
@@ -286,18 +300,22 @@ index f1ed3fe..9d87e89 100755
          "about": {
              "home": homepage,
              "PyPI": pypi,
-@@ -137,9 +375,8 @@ def make_package(
+@@ -137,12 +389,9 @@ def make_package(
          },
      }
  
 -    package_dir = packages_dir / package
-     package_dir.mkdir(parents=True, exist_ok=True)
+-    package_dir.mkdir(parents=True, exist_ok=True)
 -
-+    
-     meta_path = package_dir / "meta.yaml"
+-    meta_path = package_dir / "meta.yaml"
      if meta_path.exists():
-         raise MkpkgFailedException(f"The package {package} already exists")
-@@ -262,6 +499,11 @@ complex things.""".strip()
+-        raise MkpkgFailedException(f"The package {package} already exists")
++        print(f"Not overwriting existing meta.yaml for {package}")
++        return
+ 
+     yaml.dump(yaml_content, meta_path)
+     run_prettier(meta_path)
+@@ -262,6 +511,11 @@ complex things.""".strip()
          action="store_true",
          help="Update existing package if it has no patches",
      )
@@ -309,7 +327,7 @@ index f1ed3fe..9d87e89 100755
      parser.add_argument(
          "--source-format",
          help="Which source format is preferred. Options are wheel or sdist. "
-@@ -275,6 +517,20 @@ complex things.""".strip()
+@@ -275,6 +529,20 @@ complex things.""".strip()
          help="Package version string, "
          "e.g. v1.2.1 (defaults to latest stable release)",
      )
@@ -330,7 +348,7 @@ index f1ed3fe..9d87e89 100755
      return parser
  
  
-@@ -309,7 +565,7 @@ def main(args):
+@@ -309,7 +577,7 @@ def main(args):
              )
              return
          make_package(
