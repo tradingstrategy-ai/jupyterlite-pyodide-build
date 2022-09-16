@@ -50,5 +50,6 @@ python -m http.server
 Then connect to that site in a browser.
 
 # Running on github pages
+
 If you commit this repo to github, and set github pages settings to point to the docs folder, it should serve nicely on there.
 
