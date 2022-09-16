@@ -2,9 +2,11 @@
 
 This repo builds a GitHub Pages site to run the examples from the trading-strategy pypi module.
 
-Build by running 
-```
-run_docker.sh
+Build by running
+
+```shell
+git submodule update --init --recursive    
+./run_docker.sh
 ```
 
 This creates a docker container with the required packages for the build, then
@@ -37,17 +39,35 @@ Versions of the subpackages installed into pyodide (pyarrow, requests etc.) are 
 # Running in development mode
 To run the example site, you can either serve it using `jupyterlite serve`
 
-```
+```shell
 cd jupyter-src
 jupyterlite serve 
 ```
 or just serve the docs folder with python
-```
+
+```shell
 cd docs
-python -m http.server
+python3 -m http.server
+```
+
+Or with Caddy:
+
+```shell
+cd docs
+caddy file-server --domain dokwon.tradingstrategy.ai
 ```
 
 Then connect to that site in a browser.
+
+# Clean
+
+```shell
+rm -rf pyodide/build
+rm -rf /jupyter-src/static/pyodide
+rm -rf jupyter-src/_output/
+rm -rf docs
+rm -rf CMakeFiles
+```
 
 # Running on github pages
 If you commit this repo to github, and set github pages settings to point to the docs folder, it should serve nicely on there.
