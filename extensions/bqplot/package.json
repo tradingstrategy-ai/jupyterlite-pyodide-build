@@ -1,6 +1,6 @@
 {
   "name": "bqplot",
-  "version": "0.5.35",
+  "version": "0.5.37",
   "description": "bqplot",
   "keywords": [
     "jupyter",
@@ -98,7 +98,7 @@
       }
     },
     "_build": {
-      "load": "static/remoteEntry.40d7ace9569529c50584.js",
+      "load": "static/remoteEntry.99c828c2ee313756f7dc.js",
       "extension": "./extension"
     }
   },
