@@ -66,6 +66,7 @@ jobs:
         name: notebook dist
         path: notebook-webcomponent/dist/             
   make_pages_dist:
+    if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-latest
     needs: build    
     steps:
