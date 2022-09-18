@@ -91,7 +91,7 @@ function(create_pyodide_dependencies package_name)
     add_custom_command(OUTPUT ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/pyodide
         COMMAND echo "Create dependencies for pyodide package ${NAME}"
-        COMMAND cd pyodide-build/pyodide_build && python mkpkg.py --make-dependencies --find-correct-imports ${package_name} || true
+        COMMAND cd pyodide-build/pyodide_build && python mkpkg.py --make-dependencies --find-correct-imports ${package_name}
         COMMAND touch ${CMAKE_SOURCE_DIR}/pyodide/packages/${package_name}/.deps_made
         VERBATIM
     )
