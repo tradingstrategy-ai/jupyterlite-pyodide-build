@@ -52,8 +52,7 @@ Then connect to that site in a browser.
 # Clean
 
 ```shell
-
-rm -rf pyodide/build
+rm -rf pyodide/
 rm -rf /jupyter-src/static/pyodide
 rm -rf jupyter-src/_output/
 rm -rf docs

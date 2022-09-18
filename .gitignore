@@ -3,3 +3,14 @@
 /jupyter-src/static/pyodide
 # jupyterlite output directory
 /docs/
+
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+pyodide_meta/pyarrow/meta.yaml
+pyodide_meta/pyarrow/meta.yaml.tmp
+pyodide_meta/requests/meta.yaml
+pyodide_meta/requests/meta.yaml.tmp
+pyodide_meta/trading-strategy/meta.yaml
+pyodide_meta/trading-strategy/meta.yaml.tmp
