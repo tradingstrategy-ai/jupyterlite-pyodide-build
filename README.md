@@ -52,6 +52,7 @@ Then connect to that site in a browser.
 # Clean
 
 ```shell
+
 rm -rf pyodide/build
 rm -rf /jupyter-src/static/pyodide
 rm -rf jupyter-src/_output/
@@ -62,6 +63,14 @@ rm Makefile
 rm CMakeCache.txt
 find pyodide_meta \( -iname "*.yaml" -or -iname "*.tmp" \) -exec rm {} \;
 ```
+
+Then make sure you nuke out all Docker containers and images:
+
+```shell
+docker rm -vf $(docker ps -aq)
+docker rmi -f $(docker images -aq)
+```
+
 
 # Running on github pages
 
