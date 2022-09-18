@@ -67,7 +67,10 @@ find pyodide_meta \( -iname "*.yaml" -or -iname "*.tmp" \) -exec rm {} \;
 Then make sure you nuke out all Docker containers and images:
 
 ```shell
+# Delete containers and their volumes
 docker rm -vf $(docker ps -aq)
+
+# Delete images (should not needed - images are immutable)
 docker rmi -f $(docker images -aq)
 ```
 
