@@ -63,7 +63,7 @@ configure_meta(pyarrow)
 
 # requests source
 set(PYODIDE_REQUESTS_VERSION 2.28.1)
-set(PYODIDE_REQUESTS_SOURCE https://github.com/tradingstrategy-ai/pyodide_requests/archive/refs/tags/pyodide_v2.28.1.tar.gz)
+set(PYODIDE_REQUESTS_SOURCE https://github.com/tradingstrategy-ai/pyodide_requests/archive/refs/tags/v2.28.1.tar.gz)
 get_url_sha256(PYODIDE_REQUESTS_SHA256 ${PYODIDE_REQUESTS_SOURCE})
 configure_meta(requests)
 
