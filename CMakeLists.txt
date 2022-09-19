@@ -62,14 +62,17 @@ configure_meta(pyarrow)
 
 
 # requests source
-set(PYODIDE_REQUESTS_VERSION 2.26.0)
-set(PYODIDE_REQUESTS_SOURCE https://github.com/tradingstrategy-ai/pyodide_requests/archive/refs/tags/pyodide_2.26.0.tar.gz)
+# The filename extract in pyodided/packages/request/build as 
+# it is specified in meta.yaml.in.
+# If broken, edit meta.yaml.in.
+set(PYODIDE_REQUESTS_VERSION 2.28.1)
+set(PYODIDE_REQUESTS_SOURCE https://github.com/tradingstrategy-ai/pyodide_requests/archive/refs/tags/v2.28.1.tar.gz)
 get_url_sha256(PYODIDE_REQUESTS_SHA256 ${PYODIDE_REQUESTS_SOURCE})
 configure_meta(requests)
 
 # trading strategy source
-set(TRADING_STRATEGY_VERSION 0.6.9)
-set(TRADING_STRATEGY_SOURCE https://github.com/joemarshall/trading-strategy/releases/download/0.6.9/trading_strategy-0.6.9-py3-none-any.whl)
+set(TRADING_STRATEGY_VERSION 0.8.1)
+set(TRADING_STRATEGY_SOURCE https://files.pythonhosted.org/packages/c6/6b/2426e9f4ea829cf03ee6dcaccea81a98400edab0b9bc9ecc2aab71d47004/trading-strategy-0.8.1.tar.gz)
 get_url_sha256(TRADING_STRATEGY_SHA256 ${TRADING_STRATEGY_SOURCE})
 configure_meta(trading-strategy)
 ####
